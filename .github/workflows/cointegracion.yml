@@ -1,0 +1,29 @@
+name: Cointegración diaria
+
+on:
+  schedule:
+    - cron: '0 8 * * *'   # 8:00 UTC todos los días
+  workflow_dispatch:        # permite ejecución manual
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependencias
+        run: |
+          pip install pandas numpy statsmodels yfinance
+
+      - name: Ejecutar análisis
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: |
+          python cointegration_scanner.py
